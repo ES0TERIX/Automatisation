@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  servicefront:
+    build: ./servicefront
+    restart: always
+    networks:
+      - network
+    ports:
+      - 4000:80
+
+
+  serviceback:
+    build: ./serviceback
+    restart: always
+    networks:
+      - network
+    volumes:
+      - data-csv:/etc/data
+    ports:
+      - 3000:3000
+
+
+  serviceio:
+    build: ./serviceio
+    restart: always
+    networks:
+      - network
+    volumes:
+      - data-csv:/etc/data
+    ports:
+      - 3002:80
+
+
+  servicecalcul:
+    build: ./servicecalcul
+    restart: always
+    networks:
+      - network
+    ports:
+      - 3001:80
+
+volumes:
+  data-csv:
+
+networks:
+  network:
+    driver: bridge

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Super Calculateur de Moyenne</title>
+</head>
+
+<body>
+	<h2>Envoyer votre fichier de Note</h2>
+
+	<form id="uploadForm" enctype="multipart/form-data">
+		<label for="csvFile">Choose a CSV file:</label>
+		<input type="file" id="csvFile" name="csvFile" accept=".csv" required />
+		<br />
+		<button type="button" onclick="sauvegarderCSV()">Upload</button>
+	</form>
+
+	<button id="calculFormButton" onClick="calculMoyenne()" type="submit">
+		Calcul
+	</button>
+
+	</form>
+	
+	<pre id="calculResult"></pre>
+
+	<form id="downloadForm" action="http://localhost:3000/download" method="GET">
+		<button id="downloadFormButton" type="submit">Download</button>
+	</form>
+
+	<script>
+		function calculMoyenne() {
+    		fetch("http://localhost:3000/calculmoyenne", {
+       			method: "GET",
+    		})
+    		.then((response) => {
+        		console.log("HTTP status code:", response.status);
+
+        		if (!response.ok) {
+            		console.error("Server responded with an error:", response.statusText);
+            		throw new Error('Network response was not ok');
+        		}
+				return response.json();
+    		})
+    		.then((data) => {
+        		console.log("Received JSON data:", data);
+				if (typeof data !== 'object') {
+            		throw new Error('Invalid JSON data received');
+        		}
+				document.getElementById("calculResult").innerHTML = JSON.stringify(
+            		data,
+            		null,
+            		2
+        		);
+    		})
+    		.catch((error) => {
+        		console.error("Error:", error);
+        		document.getElementById("calculResult").innerHTML = "An error occurred. Please try again later.";
+    		});
+		}
+
+
+
+		function sauvegarderCSV() {
+			var fileInput = document.getElementById("csvFile");
+
+			if (fileInput.files.length > 0) {
+				var formData = new FormData();
+				formData.append("file", fileInput.files[0]);
+
+				fetch("http://localhost:3000/sauvegarder", {
+					method: "POST",
+					body: formData,
+				})
+				.then((response) => response.text())
+				.then((data) => {
+					alert("File uploaded successfully!");
+				})
+				.catch((error) => {
+					console.error("Error:", error);
+					alert("File upload failed!");
+				});
+			} else {
+				alert("Please choose a file to upload.");
+			}
+		}
+
+	
+	</script>
+</body>
+
+</html>

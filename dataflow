@@ -1,0 +1,43 @@
+front envoie un csv au back
+    le back le stock 
+appuye sur calcul 
+    le csv est lu par le service I/O  
+    les donnees utile au calcul envoye au servie calcul depuis I/O 
+
+    les donnees calculee envoyer au backend et I/o
+
+    backend print les donnees en front 
+
+    i/o met les donnees dans le csv
+
+appuye sur telecharger
+    backend envoye le csv au front
+
+PROTOCOL HTTP
+
+backend
+  POST stockCSV
+    entree: csv
+		// recupere le csv de l'utilisateur
+    sortie: bool
+
+	GET calculPondererResultat
+		sortie: result du calcul ponderer
+
+	GET updatedCSV
+		sortie: csv
+  
+i/o
+	GET calculPonderer
+		entree: nomCSV
+		// recupere le csv le parse 
+		// recupere les donnees les envoye au calcul 
+		// utilise les resultat pour update le csv
+		// renvoye les resultat au back
+		sortie: resultatDuCacul
+
+calcul
+
+	GET calculPondere
+		entree: data du csv parser
+		sortie: resultat du calcul
