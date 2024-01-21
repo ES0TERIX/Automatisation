@@ -7,4 +7,5 @@ public class Moyenne
 
     [Name("Moy")]
     public double Moy { get; set; }
+
 }

@@ -11,19 +11,19 @@ app.use(morgan("combined"));
 app.use(
 	cors({
 		credentials: true,
-		origin: "http://localhost:4000",
+		origin: "http://localhost:1000",
 	}),
 );
 
 const port = 3000;
 
 const storage = multer.memoryStorage(); // Store files in memory
-const upload = multer({ storage: storage });
+const sauvegarde = multer({ storage: storage });
 
-app.post("/sauvegarder", upload.single("file"), (req, res) => {
+app.post("/sauvegarder", sauvegarde.single("file"), (req, res) => {
 	const fileBinary = req.file;
 	fs.writeFile(
-		"/etc/data/note.csv",
+		"/etc/data_stored/note.csv",
 		fileBinary.buffer,
 		(err) => {
 			if (err) {
@@ -37,7 +37,7 @@ app.post("/sauvegarder", upload.single("file"), (req, res) => {
 });
 
 app.get("/telecharger", (req, res) => {
-	const file = "/etc/data/test.csv";
+	const file = "/etc/data_stored/moyenne.csv";
 	res.download(file);
 });
 

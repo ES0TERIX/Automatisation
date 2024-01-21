@@ -28,11 +28,11 @@ app.MapGet(
     "/calculmoyenne",
     async (HttpContext context) =>
     {
-        string filePath = "/etc/data/test.csv";
+        string cheminStockage = "/etc/data_stored/note.csv";
 
         try
         {
-            using (var reader = new StreamReader(filePath))
+            using (var reader = new StreamReader(cheminStockage))
             using (
                 var csvReader = new CsvReader(
                     reader,
@@ -42,10 +42,13 @@ app.MapGet(
             {
                 var rawData = csvReader.GetRecords<Eleve>().ToList();
 
+                Console.WriteLine(rawData);
+
                 var eleves = rawData
                     .Skip(1)
                     .Where(r => !string.IsNullOrEmpty(r.EtudId) && int.TryParse(r.EtudId, out _));
 
+                Console.WriteLine(eleves);
                
                 var coeffs = rawData
                     .Skip(1)
@@ -76,9 +79,6 @@ app.MapGet(
 
                 var clearData = new { eleves, coeffs };
 
-                Console.WriteLine(clearData);
-                Console.WriteLine(JsonConvert.SerializeObject(clearData));
-
                 //jusque ici ça a l'air de fonctionner
 
                 string clearSerializeData = JsonConvert.SerializeObject(clearData);
@@ -86,6 +86,8 @@ app.MapGet(
                 IApiClient apiClient = RestClient.For<IApiClient>("http://servicecalcul:80/");
 
                 var moyennePondere = await apiClient.CalculMoyenne(clearData);
+
+                Console.WriteLine(moyennePondere);
 
                 var deserializeWeightedAverage = JsonConvert.DeserializeObject<
                     Dictionary<string, double>
@@ -95,8 +97,10 @@ app.MapGet(
                     .Select(pair => new Moyenne { Name = pair.Key, Moy = pair.Value })
                     .ToList();
 
-                Console.WriteLine(finalData);
+                Console.WriteLine("finalData" + finalData);
 
+                nouveauCSV(finalData);
+                
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(
                     moyennePondere.Content.ReadAsStringAsync().Result
@@ -111,20 +115,23 @@ app.MapGet(
     }
 );
 
-static void CreerCSVFinal(List<Moyenne> finalData, string clearSerializeData)
+static void nouveauCSV(List<Moyenne> moyennePondere)
 {
-    try
+    string cheminStockage = "/etc/data_stored/moyenne.csv";
+    using (var writer = new StreamWriter(cheminStockage))
+    using (
+        var csvWriter = new CsvWriter(
+            writer,
+            new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Delimiter = ";",
+                Encoding = Encoding.UTF8,
+								HasHeaderRecord = false,
+            }
+        )
+    )
     {
-        using (var writer = new StreamWriter("/etc/data/moyennes.csv"))
-        using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
-        {
-           
-        }
-        Console.WriteLine("Le fichier CSV a été créé avec succès.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error creating CSV file: {ex.Message}");
+        csvWriter.WriteRecords(moyennePondere);
     }
 }
 

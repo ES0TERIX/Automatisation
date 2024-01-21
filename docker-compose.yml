@@ -7,7 +7,7 @@ services:
     networks:
       - network
     ports:
-      - 4000:80
+      - 1000:80
 
 
   serviceback:
@@ -16,7 +16,7 @@ services:
     networks:
       - network
     volumes:
-      - data-csv:/etc/data
+      - data-csv:/etc/data_stored
     ports:
       - 3000:3000
 
@@ -27,9 +27,9 @@ services:
     networks:
       - network
     volumes:
-      - data-csv:/etc/data
+      - data-csv:/etc/data_stored
     ports:
-      - 3002:80
+      - 5000:80
 
 
   servicecalcul:
@@ -38,7 +38,7 @@ services:
     networks:
       - network
     ports:
-      - 3001:80
+      - 7000:80
 
 volumes:
   data-csv:
