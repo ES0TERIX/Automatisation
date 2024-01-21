@@ -95,6 +95,8 @@ app.MapGet(
                     .Select(pair => new Moyenne { Name = pair.Key, Moy = pair.Value })
                     .ToList();
 
+                Console.WriteLine(finalData);
+
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(
                     moyennePondere.Content.ReadAsStringAsync().Result
@@ -108,5 +110,22 @@ app.MapGet(
         }
     }
 );
+
+static void CreerCSVFinal(List<Moyenne> finalData, string clearSerializeData)
+{
+    try
+    {
+        using (var writer = new StreamWriter("/etc/data/moyennes.csv"))
+        using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+           
+        }
+        Console.WriteLine("Le fichier CSV a été créé avec succès.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error creating CSV file: {ex.Message}");
+    }
+}
 
 app.Run();

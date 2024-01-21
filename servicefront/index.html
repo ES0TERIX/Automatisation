@@ -25,7 +25,7 @@
 	
 	<pre id="calculResult"></pre>
 
-	<form id="downloadForm" action="http://localhost:3000/download" method="GET">
+	<form id="downloadForm" action="http://localhost:3000/telecharger" method="GET">
 		<button id="downloadFormButton" type="submit">Download</button>
 	</form>
 
@@ -48,19 +48,13 @@
 				if (typeof data !== 'object') {
             		throw new Error('Invalid JSON data received');
         		}
-				document.getElementById("calculResult").innerHTML = JSON.stringify(
-            		data,
-            		null,
-            		2
-        		);
+				afficherTableau(data);
     		})
     		.catch((error) => {
         		console.error("Error:", error);
         		document.getElementById("calculResult").innerHTML = "An error occurred. Please try again later.";
     		});
 		}
-
-
 
 		function sauvegarderCSV() {
 			var fileInput = document.getElementById("csvFile");
@@ -85,8 +79,36 @@
 				alert("Please choose a file to upload.");
 			}
 		}
+		
+		function afficherTableau(data) {
 
-	
+    		var calculResultElement = document.getElementById("calculResult");
+    		var table = document.createElement("table");
+    		var thead = document.createElement("thead");
+    		var headerRow = document.createElement("tr");
+   			var prenomHeader = document.createElement("th");
+    		prenomHeader.textContent = "Prenom";
+    		var moyenneHeader = document.createElement("th");
+    		moyenneHeader.textContent = "Moyenne";
+     		headerRow.appendChild(prenomHeader);
+    		headerRow.appendChild(moyenneHeader);
+    		thead.appendChild(headerRow);
+    		table.appendChild(thead);
+    		var tbody = document.createElement("tbody");
+    		for (var prenom in data) {
+        		var row = document.createElement("tr");
+        		var prenomCell = document.createElement("td");
+        		prenomCell.textContent = prenom;
+        		var moyenneCell = document.createElement("td");
+        		moyenneCell.textContent = data[prenom];
+        		row.appendChild(prenomCell);
+        		row.appendChild(moyenneCell);
+        		tbody.appendChild(row);
+    		}
+    		table.appendChild(tbody);
+    		calculResultElement.innerHTML = "";
+   			calculResultElement.appendChild(table);
+		}
 	</script>
 </body>
 

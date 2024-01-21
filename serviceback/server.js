@@ -23,7 +23,7 @@ const upload = multer({ storage: storage });
 app.post("/sauvegarder", upload.single("file"), (req, res) => {
 	const fileBinary = req.file;
 	fs.writeFile(
-		"/etc/data/" + req.file.originalname,
+		"/etc/data/note.csv",
 		fileBinary.buffer,
 		(err) => {
 			if (err) {
@@ -36,7 +36,7 @@ app.post("/sauvegarder", upload.single("file"), (req, res) => {
 	res.status(200).send(fileBinary);
 });
 
-app.get("/download", (req, res) => {
+app.get("/telecharger", (req, res) => {
 	const file = "/etc/data/test.csv";
 	res.download(file);
 });
